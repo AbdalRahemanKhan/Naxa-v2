@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAXA — Supply Chain Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f7f4ef;
+  --paper2: #f0ece4;
+  --ink: #1c1a17;
+  --ink2: #2e2b26;
+  --ink3: #4a4640;
+  --muted: #8a8278;
+  --muted2: #b8b0a4;
+  --accent: #1a4a2e;
+  --accent2: #2d6b45;
+  --accent-warm: #8b4513;
+  --gold: #c8960a;
+  --border: rgba(28,26,23,0.1);
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); overflow-x: hidden; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  padding: 20px 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 100; transition: all 0.3s;
+}
+nav.scrolled {
+  background: rgba(247,244,239,0.95);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  padding: 14px 60px;
+}
+.nav-logo { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: 0.08em; }
+.nav-logo span { color: var(--accent); }
+.nav-enter {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+  background: var(--accent); color: white;
+  padding: 10px 22px; text-decoration: none;
+  text-transform: uppercase; transition: all 0.2s;
+  border: none; cursor: pointer;
+}
+.nav-enter:hover { background: var(--accent2); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 120px 60px 80px;
+  position: relative;
+  background: var(--paper);
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 40%, rgba(26,74,46,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 40% at 80% 70%, rgba(139,69,19,0.04) 0%, transparent 60%);
+}
+.hero-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.28em;
+  color: var(--muted); text-transform: uppercase; margin-bottom: 28px;
+  opacity: 0; animation: fadeUp 0.7s 0.1s forwards;
+}
+.hero-title {
+  font-family: var(--serif); font-size: clamp(52px, 7vw, 100px);
+  font-weight: 700; line-height: 0.95; letter-spacing: -0.02em;
+  color: var(--ink); margin-bottom: 20px;
+  opacity: 0; animation: fadeUp 0.8s 0.25s forwards;
+}
+.hero-title em { font-style: italic; color: var(--accent); }
+.hero-sub {
+  font-size: 18px; font-weight: 300; color: var(--ink3);
+  max-width: 520px; line-height: 1.65; margin: 0 auto 52px;
+  opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+}
+.hero-cta {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp 0.8s 0.55s forwards;
+}
+.btn-main {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+  background: var(--accent); color: white;
+  padding: 16px 42px; text-decoration: none; font-weight: 500;
+  text-transform: uppercase; transition: all 0.2s; border: 2px solid var(--accent);
+  cursor: pointer;
+}
+.btn-main:hover { background: var(--accent2); border-color: var(--accent2); transform: translateY(-1px); }
+.btn-outline {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+  background: transparent; color: var(--ink3);
+  padding: 16px 42px; text-decoration: none;
+  text-transform: uppercase; transition: all 0.2s;
+  border: 2px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--ink); color: var(--ink); }
+
+/* PREVIEW SECTION */
+.preview-section { padding: 80px 60px 100px; background: var(--ink); }
+.section-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.25em;
+  color: var(--muted); text-align: center; margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.preview-frame {
+  max-width: 1100px; margin: 0 auto;
+  border: 1px solid rgba(255,255,255,0.08); overflow: hidden;
+}
+.frame-chrome {
+  background: #0f0e0c; padding: 10px 14px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.dot { width: 11px; height: 11px; border-radius: 50%; }
+.frame-url {
+  font-family: var(--mono); font-size: 10px;
+  color: rgba(255,255,255,0.2); margin: 0 auto;
+  letter-spacing: 0.06em;
+}
+.frame-body {
+  display: grid; grid-template-columns: 260px 1fr 230px;
+  height: 380px; background: #13110f; overflow: hidden;
+}
+/* Left col */
+.fl { border-right: 1px solid rgba(255,255,255,0.06); }
+.fl-head { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.fl-head-txt { font-family: var(--mono); font-size: 8px; letter-spacing: 0.2em; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+.fl-sig { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); border-left: 3px solid transparent; }
+.fl-sig.s1 { border-left-color: #c0392b; }
+.fl-sig.s2 { border-left-color: #2d6b45; }
+.fl-sig.s3 { border-left-color: #c8960a; }
+.fl-sig.s4 { border-left-color: #8b4513; }
+.fl-sig-cat { font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.12em; color: rgba(255,255,255,0.3); margin-bottom: 3px; }
+.fl-sig-hed { font-family: 'Playfair Display', serif; font-size: 11.5px; color: rgba(247,244,239,0.88); line-height: 1.4; margin-bottom: 4px; }
+.fl-sig-bar { height: 2px; background: rgba(255,255,255,0.06); border-radius: 1px; overflow: hidden; }
+.fl-sig-fill { height: 100%; border-radius: 1px; }
+/* Center */
+.fc { padding: 22px 24px; }
+.fc-ey { font-family: var(--mono); font-size: 8px; letter-spacing: 0.2em; color: rgba(200,150,10,0.8); margin-bottom: 8px; }
+.fc-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: rgba(247,244,239,0.95); line-height: 1.3; margin-bottom: 14px; }
+.fc-chain { display: flex; gap: 0; overflow: hidden; }
+.fc-node { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); padding: 8px 10px; text-align: center; flex: 1; border-top: 2px solid; }
+.fc-ns { font-family: var(--mono); font-size: 7px; color: rgba(255,255,255,0.25); margin-bottom: 3px; }
+.fc-nn { font-size: 10px; color: rgba(247,244,239,0.8); font-weight: 500; line-height: 1.3; }
+.fc-ni { font-family: var(--mono); font-size: 8.5px; margin-top: 4px; }
+.fc-arrow { display: flex; align-items: center; padding: 0 5px; color: rgba(255,255,255,0.2); font-size: 11px; flex-shrink: 0; }
+.fc-insts { margin-top: 14px; }
+.fc-inst-label { font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.16em; color: rgba(200,150,10,0.7); margin-bottom: 6px; }
+.fc-inst-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.fc-inst-chip { background: rgba(45,107,69,0.2); border: 1px solid rgba(45,107,69,0.3); padding: 3px 9px; font-family: var(--mono); font-size: 9.5px; color: rgba(200,240,210,0.8); }
+/* Right col */
+.fr { border-left: 1px solid rgba(255,255,255,0.06); padding: 0; }
+.fr-head { padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: var(--mono); font-size: 8px; letter-spacing: 0.18em; color: rgba(255,255,255,0.25); }
+.fr-row { display: flex; justify-content: space-between; padding: 7px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); font-family: var(--mono); font-size: 10px; }
+.fr-name { color: rgba(255,255,255,0.35); }
+.fr-val { color: rgba(247,244,239,0.75); }
+.fr-up { color: #2d6b45; }
+.fr-dn { color: #c0392b; }
+
+/* FEATURES GRID */
+.features { padding: 100px 60px; background: var(--paper); }
+.features-inner { max-width: 1100px; margin: 0 auto; }
+.features-title {
+  font-family: var(--serif); font-size: clamp(32px,4vw,52px);
+  font-weight: 700; line-height: 1.1; margin-bottom: 56px; max-width: 600px;
+}
+.features-title em { font-style: italic; color: var(--accent); }
+.feat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; border: 1px solid var(--border); }
+.feat-card {
+  padding: 32px 28px; border: 1px solid var(--border);
+  transition: background 0.2s; position: relative; overflow: hidden;
+}
+.feat-card:hover { background: var(--paper2); }
+.feat-card::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent); transform: scaleX(0); transition: transform 0.3s;
+}
+.feat-card:hover::after { transform: scaleX(1); }
+.feat-num { font-family: var(--mono); font-size: 10px; color: var(--muted2); margin-bottom: 10px; letter-spacing: 0.1em; }
+.feat-icon { font-size: 26px; margin-bottom: 12px; }
+.feat-title { font-family: var(--serif); font-size: 18px; font-weight: 600; margin-bottom: 10px; line-height: 1.25; }
+.feat-title em { font-style: italic; color: var(--accent); }
+.feat-text { font-size: 13px; color: var(--ink3); line-height: 1.75; }
+
+/* QUOTE */
+.quote-section { padding: 100px 60px; background: var(--paper2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); text-align: center; }
+.quote-text { font-family: var(--serif); font-size: clamp(24px,3vw,38px); font-style: italic; line-height: 1.4; max-width: 760px; margin: 0 auto 16px; color: var(--ink); }
+.quote-text span { color: var(--accent); }
+.quote-attr { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
+
+/* CTA FINAL */
+.cta-final { padding: 100px 60px; text-align: center; background: var(--ink); }
+.cta-title { font-family: var(--serif); font-size: clamp(36px,5vw,60px); font-weight: 700; color: var(--paper); line-height: 1.1; margin-bottom: 14px; }
+.cta-title em { font-style: italic; color: #a3c4a8; }
+.cta-sub { font-size: 16px; color: rgba(247,244,239,0.5); margin-bottom: 44px; font-style: italic; }
+.btn-main-light {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+  background: white; color: var(--ink);
+  padding: 16px 44px; text-decoration: none; font-weight: 600;
+  text-transform: uppercase; transition: all 0.2s; border: 2px solid white;
+  cursor: pointer; display: inline-block;
+}
+.btn-main-light:hover { background: var(--paper2); border-color: var(--paper2); }
+
+footer {
+  padding: 28px 60px; background: var(--ink);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-logo { font-family: var(--serif); font-size: 18px; font-weight: 700; color: rgba(247,244,239,0.7); letter-spacing: 0.08em; }
+.footer-copy { font-family: var(--mono); font-size: 9px; color: rgba(247,244,239,0.25); letter-spacing: 0.12em; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s, transform 0.6s; }
+.reveal.in { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-logo">NA<span>X</span>A</div>
+  <a href="terminal.html" class="nav-enter">Open Terminal →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Supply Chain Intelligence · For analysts, by analysts</div>
+  <h1 class="hero-title">
+    Sees what markets<br>
+    <em>haven't priced yet.</em>
+  </h1>
+  <p class="hero-sub">
+    Purpose-built for supply chain, equity, and quantitative analysts who need to find the signal before it reaches the terminal.
+  </p>
+  <div class="hero-cta">
+    <a href="terminal.html" class="btn-main">Open Terminal →</a>
+    <a href="#preview" class="btn-outline">See it in action ↓</a>
+  </div>
+</section>
+
+<!-- TERMINAL PREVIEW -->
+<section class="preview-section" id="preview">
+  <div class="section-label" style="color:rgba(247,244,239,0.3)">Inside the terminal</div>
+  <div class="preview-frame reveal">
+    <div class="frame-chrome">
+      <div class="dot" style="background:#ff5f56"></div>
+      <div class="dot" style="background:#ffbd2e"></div>
+      <div class="dot" style="background:#27c93f"></div>
+      <div class="frame-url">naxa.app/terminal</div>
+    </div>
+    <div class="frame-body">
+      <div class="fl">
+        <div class="fl-head"><span class="fl-head-txt">Signals · 8 Active</span></div>
+        <div class="fl-sig s1">
+          <div class="fl-sig-cat">METALS · NOW</div>
+          <div class="fl-sig-hed">China rare earth licensing: 45 days avg — wind OEM supply fracturing</div>
+          <div class="fl-sig-bar"><div class="fl-sig-fill" style="width:91%;background:#c0392b"></div></div>
+        </div>
+        <div class="fl-sig s2">
+          <div class="fl-sig-cat">AGRI · SOON</div>
+          <div class="fl-sig-hed">Vietnam rubber harvest 8% below — tire margin compression incoming</div>
+          <div class="fl-sig-bar"><div class="fl-sig-fill" style="width:82%;background:#2d6b45"></div></div>
+        </div>
+        <div class="fl-sig s3">
+          <div class="fl-sig-cat">AGRI · SOON</div>
+          <div class="fl-sig-hed">Cocoa 46-yr high: Nestle, Mondelez guidance cuts forming Q3</div>
+          <div class="fl-sig-bar"><div class="fl-sig-fill" style="width:88%;background:#c8960a"></div></div>
+        </div>
+        <div class="fl-sig s4">
+          <div class="fl-sig-cat">SHIPPING · NOW</div>
+          <div class="fl-sig-hed">Red Sea +31% freight rates — FMCG guidance gaps not updated</div>
+          <div class="fl-sig-bar"><div class="fl-sig-fill" style="width:79%;background:#8b4513"></div></div>
+        </div>
+      </div>
+      <div class="fc">
+        <div class="fc-ey">METALS · IMMEDIATE · CONVICTION 91/100</div>
+        <div class="fc-title">China rare earth licensing hits 45 days — wind supply chain fracturing</div>
+        <div class="fc-chain">
+          <div class="fc-node" style="border-top-color:#c0392b">
+            <div class="fc-ns">Source</div><div class="fc-nn">Inner Mongolia</div>
+            <div class="fc-ni" style="color:#c0392b">▼ Export blocked</div>
+          </div>
+          <div class="fc-arrow">→</div>
+          <div class="fc-node" style="border-top-color:#c0392b">
+            <div class="fc-ns">Process</div><div class="fc-nn">TDK, Shin-Etsu</div>
+            <div class="fc-ni" style="color:#c0392b">▼ Input halted</div>
+          </div>
+          <div class="fc-arrow">→</div>
+          <div class="fc-node" style="border-top-color:#c0392b">
+            <div class="fc-ns">OEM</div><div class="fc-nn">Vestas / Siemens</div>
+            <div class="fc-ni" style="color:#c0392b">▼ 60-90d delay</div>
+          </div>
+          <div class="fc-arrow">→</div>
+          <div class="fc-node" style="border-top-color:#c0392b">
+            <div class="fc-ns">Policy</div><div class="fc-nn">EU 2030 Targets</div>
+            <div class="fc-ni" style="color:#c0392b">▼ At risk</div>
+          </div>
+        </div>
+        <div class="fc-insts">
+          <div class="fc-inst-label">Instruments to Watch</div>
+          <div class="fc-inst-row">
+            <div class="fc-inst-chip">MP — equity</div>
+            <div class="fc-inst-chip">VWS.CO — equity</div>
+            <div class="fc-inst-chip">LYC.AX — equity</div>
+            <div class="fc-inst-chip">REMX — ETF</div>
+          </div>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fr-head">Commodities</div>
+        <div class="fr-row"><span class="fr-name">Brent</span><span class="fr-val">$82.4 <span class="fr-up">▲1.2%</span></span></div>
+        <div class="fr-row"><span class="fr-name">Copper</span><span class="fr-val">$4.48 <span class="fr-dn">▼0.8%</span></span></div>
+        <div class="fr-row"><span class="fr-name">Rubber</span><span class="fr-val">$1.58 <span class="fr-dn">▼2.3%</span></span></div>
+        <div class="fr-row"><span class="fr-name">Cocoa</span><span class="fr-val">$10,840 <span class="fr-up">▲3.1%</span></span></div>
+        <div class="fr-row"><span class="fr-name">Wheat</span><span class="fr-val">542¢ <span class="fr-dn">▼1.1%</span></span></div>
+        <div class="fr-row"><span class="fr-name">Lithium</span><span class="fr-val">$13,100 <span class="fr-dn">▼0.7%</span></span></div>
+        <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,0.05);margin-top:4px">
+          <div style="font-family:var(--mono);font-size:8px;color:rgba(200,150,10,0.8);margin-bottom:6px;letter-spacing:.15em">MOMO · CIO</div>
+          <div style="font-size:10px;color:rgba(247,244,239,0.5);line-height:1.55">Rare earths and rubber both flagged this morning. MP Materials is obvious — Lynas is the one fewer people are watching.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-inner">
+    <h2 class="features-title reveal">Built around what <em>analysts actually need</em> — not what looks impressive.</h2>
+    <div class="feat-grid reveal">
+      <div class="feat-card">
+        <div class="feat-num">01</div>
+        <div class="feat-icon">🔗</div>
+        <h3 class="feat-title">Supply chain <em>tracing</em></h3>
+        <p class="feat-text">Every signal traces 5-8 stages from raw material to end instrument. Not a headline — a complete causal map showing exactly where the financial impact lands.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-num">02</div>
+        <div class="feat-icon">⏱</div>
+        <h3 class="feat-title">Lead-lag <em>mapping</em></h3>
+        <p class="feat-text">Tracks how many days between a physical event and its market impact. Rubber harvest → tire OEM margin compression is a 60-90 day lag. NAXA quantifies it.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-num">03</div>
+        <div class="feat-icon">🎯</div>
+        <h3 class="feat-title">Event → instrument <em>path</em></h3>
+        <p class="feat-text">Input any geopolitical or commodity event. Get the cleanest 2nd and 3rd order trade with specific tickers — not the obvious play, the downstream one.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-num">04</div>
+        <div class="feat-icon">📊</div>
+        <h3 class="feat-title">Signal accuracy <em>database</em></h3>
+        <p class="feat-text">Every signal places a timestamped prediction. Outcomes are tracked. Sources that predict correctly get higher weight. After 6 months — this is the moat.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-num">05</div>
+        <div class="feat-icon">📋</div>
+        <h3 class="feat-title">Thesis <em>tracking</em></h3>
+        <p class="feat-text">Watch any instrument with an attached thesis. When the signal that generated the thesis changes, NAXA flags it. Your reasoning stays connected to your watchlist.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-num">06</div>
+        <div class="feat-icon">🏛</div>
+        <h3 class="feat-title">Iron Gates <em>evaluator</em></h3>
+        <p class="feat-text">Your personal 6-gate investment framework automated. Paste any ticker — moat, management, financials, valuation, macro, risk — evaluated in 10 seconds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-section reveal">
+  <p class="quote-text">"By the time it's in Bloomberg, <span>it's already in the price.</span>"</p>
+  <div class="quote-attr">NAXA · Supply Chain Intelligence</div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-final reveal">
+  <h2 class="cta-title">The briefing is ready.<br><em>Momo never stopped.</em></h2>
+  <p class="cta-sub">Agents running. Signals pre-computed. Open the terminal.</p>
+  <a href="terminal.html" class="btn-main-light">Open NAXA Terminal →</a>
+  <div style="margin-top:24px;font-family:var(--mono);font-size:10px;color:rgba(247,244,239,0.25);letter-spacing:.1em">
+    Free · Groq API · No subscription · For the love of the game
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">NAXA</div>
+  <div class="footer-copy">Supply Chain Intelligence · For the love of the game</div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', scrollY > 40);
+});
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
