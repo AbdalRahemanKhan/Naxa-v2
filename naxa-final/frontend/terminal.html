@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAXA — Intelligence Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/terminal.css">
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header id="topbar">
+  <div class="tb-logo">NA<span>X</span>A</div>
+  <div class="tb-sep"></div>
+  <div class="tb-ticker"><div class="tick-inner" id="ticker"></div></div>
+  <div class="tb-right">
+    <div class="tb-agents"><div class="agent-dot"></div><span id="agent-status-txt">Agents active</span></div>
+    <div class="tb-sep"></div>
+    <div class="tb-time" id="clock"></div>
+    <button class="tb-btn" id="btn-map-view">🌍 Map</button>
+    <button class="tb-btn" id="btn-corr-view">📈 Correlations</button>
+    <button class="tb-btn" id="btn-agents-view">🔬 Agents</button>
+    <button class="tb-btn" id="btn-ig-view">🏛 Iron Gates</button>
+    <button class="tb-btn" id="btn-journal-view">📋 Journal</button>
+    <button class="tb-btn" id="btn-config">⚙</button>
+    <a href="index.html" class="tb-btn" style="text-decoration:none">← Home</a>
+  </div>
+</header>
+
+<!-- MAIN 3-COLUMN LAYOUT -->
+<div id="layout">
+
+  <!-- LEFT: Signal Feed -->
+  <div id="left-col">
+    <div class="col-head">
+      <span class="col-head-title">Signals</span>
+      <span style="font-family:var(--mono);font-size:9px;color:var(--accent)" id="sig-count"></span>
+    </div>
+    <div class="filter-bar">
+      <button class="fpill on" data-cat="all">All</button>
+      <button class="fpill" data-cat="agricultural">Agri</button>
+      <button class="fpill" data-cat="energy">Energy</button>
+      <button class="fpill" data-cat="metals">Metals</button>
+      <button class="fpill" data-cat="shipping">Ship</button>
+      <button class="fpill" data-cat="geopolitical">Geo</button>
+      <button class="fpill" data-cat="financial">Fin</button>
+    </div>
+    <div id="signal-list"><div class="loading-txt">Loading signals...</div></div>
+  </div>
+
+  <!-- CENTER: Insight / Placeholder -->
+  <div id="center-col">
+    <div class="insight-placeholder" id="placeholder">
+      <div class="ph-logo">NAXA</div>
+      <div class="ph-text">Select a signal to view the full intelligence briefing</div>
+      <div class="ph-sub">Supply chain traces · Lead-lag maps · Actionable instruments</div>
+    </div>
+    <div id="insight-pane" style="display:none"></div>
+  </div>
+
+  <!-- RIGHT: Momo + Commodities + Watchlist -->
+  <div id="right-col">
+    <div id="momo-wrap">
+      <div class="momo-head">
+        <span class="momo-ava">🐱</span>
+        <div>
+          <div class="momo-nm">Momo</div>
+          <div class="momo-rl">Chief Intelligence Officer</div>
+        </div>
+        <div class="momo-live"><div class="agent-dot"></div>LIVE</div>
+      </div>
+      <div class="momo-body" id="momo-body"></div>
+      <div class="momo-footer">
+        <div class="momo-input-row">
+          <input type="text" id="momo-inp" class="momo-inp" placeholder="Ask Momo anything..." autocomplete="off"/>
+          <button class="momo-send-btn" id="momo-send">→</button>
+        </div>
+        <div class="momo-tools">
+          <button class="momo-tool" id="btn-pdf">📄 PDF</button>
+          <button class="momo-tool" id="btn-csv">📊 CSV</button>
+          <button class="momo-tool" id="btn-briefing">☀ Brief</button>
+          <button class="momo-tool" id="btn-watchlist-add">+ Watch</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-head" style="flex-shrink:0">
+      <span class="col-head-title">Commodities</span>
+      <button class="tb-btn" id="btn-refresh-com" style="font-size:9px;padding:3px 7px">↻</button>
+    </div>
+    <div id="com-strip"></div>
+    <div class="col-head" style="flex-shrink:0;border-top:1px solid var(--border)">
+      <span class="col-head-title">Watchlist</span>
+    </div>
+    <div id="watchlist-section"></div>
+  </div>
+</div>
+
+<!-- ── FULL-SCREEN VIEWS ── -->
+
+<!-- World Map -->
+<div class="view-overlay" id="view-map">
+  <div class="view-head">
+    <button class="view-back" id="map-back">← Back</button>
+    <div class="view-title">Global Supply Chain Map</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto">Click a region to filter signals</div>
+  </div>
+  <div class="view-body" style="position:relative">
+    <svg id="world-svg" viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="map-tt" id="map-tt"></div>
+    <div style="display:flex;gap:14px;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--muted)">
+      <span>■ <span style="color:var(--accent)">Boom</span></span>
+      <span>■ <span style="color:#3d8a5a">Growth</span></span>
+      <span>■ <span style="color:var(--watch)">Stable</span></span>
+      <span>■ <span style="color:var(--soon)">Caution</span></span>
+      <span>■ <span style="color:var(--now)">Stress</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- Correlations -->
+<div class="view-overlay" id="view-corr">
+  <div class="view-head">
+    <button class="view-back" id="corr-back">← Back</button>
+    <div class="view-title">Lead-Lag Correlation Map</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto">Physical event → financial impact timing</div>
+  </div>
+  <div class="view-body" id="corr-body"></div>
+</div>
+
+<!-- Agent Network -->
+<div class="view-overlay" id="view-agents">
+  <div class="view-head">
+    <button class="view-back" id="agents-back">← Back</button>
+    <div class="view-title">Agent Network — Live</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto" id="agents-last-run"></div>
+  </div>
+  <div class="view-body">
+    <div class="agent-grid" id="agent-grid"></div>
+  </div>
+</div>
+
+<!-- Iron Gates -->
+<div class="view-overlay" id="view-ig">
+  <div class="view-head">
+    <button class="view-back" id="ig-back">← Back</button>
+    <div class="view-title">Iron Gates Strategy Tester</div>
+  </div>
+  <div class="view-body" style="max-width:760px">
+    <div style="font-size:14px;color:var(--ink3);margin-bottom:20px;line-height:1.7">
+      Paste any ticker, Yahoo Finance URL, or company name. The Finance Department evaluates it against your 6-gate framework: moat, management, financials, valuation, macro, and risk.
+    </div>
+    <div class="ig-input-row">
+      <input type="text" id="ig-input" class="ig-inp" placeholder="AAPL, RELIANCE.NS, https://finance.yahoo.com/quote/MSFT..." autocomplete="off"/>
+      <button class="btn-run" id="btn-ig-run">Analyse →</button>
+    </div>
+    <div id="ig-result"></div>
+  </div>
+</div>
+
+<!-- Trade Journal -->
+<div class="view-overlay" id="view-journal">
+  <div class="view-head">
+    <button class="view-back" id="journal-back">← Back</button>
+    <div class="view-title">Trade Journal</div>
+    <button class="btn-run" id="btn-new-trade" style="margin-left:auto">+ Log Trade</button>
+  </div>
+  <div class="view-body" style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.18em;margin-bottom:12px;text-transform:uppercase">Trade History</div>
+      <div id="trade-list"></div>
+    </div>
+    <div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.18em;margin-bottom:12px;text-transform:uppercase">Bet Ledger — Signal Accuracy</div>
+      <div id="bet-summary"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Full chain modal -->
+<div class="modal-bg" id="chain-modal" style="display:none">
+  <div class="modal-box modal-wide">
+    <div class="modal-head">
+      <span class="modal-title" id="chain-modal-title">Supply Chain</span>
+      <button class="modal-x" id="chain-close">✕</button>
+    </div>
+    <div class="modal-body" id="chain-modal-body"></div>
+  </div>
+</div>
+
+<!-- Add to watchlist modal -->
+<div class="modal-bg" id="watch-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-title">Add to Watchlist</span>
+      <button class="modal-x" id="watch-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="cfg-field">
+        <label class="cfg-label">Ticker / Instrument</label>
+        <input type="text" id="w-ticker" class="cfg-input" placeholder="AAPL, RELIANCE.NS, CC=F..."/>
+      </div>
+      <div class="cfg-field">
+        <label class="cfg-label">Your Thesis</label>
+        <textarea id="w-thesis" class="cfg-input" rows="3" placeholder="Why are you watching this? What signal would change your view?"></textarea>
+      </div>
+      <button class="btn-save" id="w-save">Add to Watchlist</button>
+    </div>
+  </div>
+</div>
+
+<!-- New trade modal -->
+<div class="modal-bg" id="trade-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-title">Log a Trade</span>
+      <button class="modal-x" id="trade-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tf-field">
+        <label class="tf-label">Ticker</label>
+        <input type="text" id="tj-ticker" class="tf-input" placeholder="AAPL, RELIANCE.NS..."/>
+      </div>
+      <div class="tf-grid" style="margin-bottom:16px">
+        <div class="tf-field">
+          <label class="tf-label">Action</label>
+          <select id="tj-action" class="tf-input" style="background:var(--paper2)">
+            <option>BUY</option><option>SELL</option><option>SHORT</option><option>WATCHING</option>
+          </select>
+        </div>
+        <div class="tf-field">
+          <label class="tf-label">Price at Entry</label>
+          <input type="number" id="tj-price" class="tf-input" placeholder="0.00"/>
+        </div>
+      </div>
+      <div class="tf-field">
+        <label class="tf-label">Your Reasoning (be honest)</label>
+        <textarea id="tj-reason" class="tf-input" rows="4" placeholder="Why this trade? What is the thesis? What would make you wrong?"></textarea>
+      </div>
+      <button class="btn-save" id="tj-save">Save + AI Evaluation →</button>
+      <div id="tj-result" style="margin-top:10px;font-size:12px;color:var(--ink3);line-height:1.7"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Config modal -->
+<div class="modal-bg" id="config-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-title">Configuration</span>
+      <button class="modal-x" id="cfg-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="cfg-note">All keys stored in your browser only. Free tiers are enough for personal use. No credit card needed.</div>
+      <div class="cfg-field">
+        <div class="cfg-label">Groq API Key <a href="https://console.groq.com" target="_blank">→ Get free key</a></div>
+        <input type="password" id="cfg-groq" class="cfg-input" placeholder="gsk_..."/>
+        <span class="cfg-small">14,400 req/day free · Powers all AI analysis</span>
+      </div>
+      <div class="cfg-field">
+        <div class="cfg-label">Currents API Key <a href="https://currentsapi.services" target="_blank">→ Get free key</a></div>
+        <input type="password" id="cfg-currents" class="cfg-input" placeholder="currents_..."/>
+        <span class="cfg-small">Free tier · No delay · Real-time news</span>
+      </div>
+      <div class="cfg-field">
+        <div class="cfg-label">Your Email (for PDF briefings)</div>
+        <input type="email" id="cfg-email" class="cfg-input" placeholder="you@email.com"/>
+      </div>
+      <button class="btn-save" id="cfg-save">Save Configuration</button>
+      <div id="cfg-ok" class="cfg-ok"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/correlations.js"></script>
+<script src="js/irongate.js"></script>
+<script src="js/commodities.js"></script>
+<script src="js/momo.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
