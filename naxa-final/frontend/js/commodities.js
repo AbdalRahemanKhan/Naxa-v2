@@ -46,29 +46,14 @@ function buildTicker(data) {
 }
 
 async function loadPolymarket() {
-  const fallback = [
+  const markets = [
     { q: 'Will Fed cut rates before Sep 2025?', yes: 0.42, vol: 2100000 },
     { q: 'Will OPEC+ increase production Q3?', yes: 0.28, vol: 890000 },
     { q: 'Will China GDP exceed 5% in 2025?', yes: 0.61, vol: 1450000 },
     { q: 'Will Brent crude exceed $95/bbl?', yes: 0.31, vol: 760000 },
     { q: 'Will India GDP exceed 7% FY2026?', yes: 0.74, vol: 430000 },
   ];
-  let markets = fallback;
 
-  try {
-    const r = await fetch('https://gamma-api.polymarket.com/markets?active=true&closed=false&limit=12&order=volume&ascending=false');
-    if (r.ok) {
-      const d = await r.json();
-      const kw = ['oil','fed','rate','gdp','inflation','china','opec','gold','india','tariff','commodity','crop'];
-      const f = d.filter(m => kw.some(k => (m.question||'').toLowerCase().includes(k))).slice(0, 5);
-      if (f.length >= 2) markets = f.map(m => ({
-        q: m.question || '', yes: parseFloat(m.outcomePrices?.[0] || 0.5),
-        vol: parseFloat(m.volume || 0), url: `https://polymarket.com/event/${m.slug || ''}`
-      }));
-    }
-  } catch {}
-
-  // Append polymarket section below commodities in right col
   let sec = $('poly-sec');
   if (!sec) {
     sec = document.createElement('div');
@@ -76,21 +61,20 @@ async function loadPolymarket() {
     const rc = $('right-col');
     if (rc) rc.insertBefore(sec, $('watchlist-section'));
   }
-
   sec.innerHTML = `
     <div class="col-head" style="border-top:1px solid var(--border)">
       <span class="col-head-title">Polymarket</span>
     </div>
     ${markets.map(m => {
       const pct = Math.round(m.yes * 100);
-      const vol = m.vol >= 1e6 ? '$' + (m.vol / 1e6).toFixed(1) + 'M' : m.vol >= 1e3 ? '$' + (m.vol / 1e3).toFixed(0) + 'K' : '';
-      return `<div style="padding:8px 14px;border-bottom:1px solid var(--border2);cursor:pointer" onclick="${m.url ? `window.open('${m.url}','_blank')` : ''}" onmouseover="this.style.background='var(--paper3)'" onmouseout="this.style.background=''">
-        <div style="font-size:11px;color:var(--ink2);line-height:1.5;margin-bottom:5px">${m.q.substring(0, 72)}${m.q.length > 72 ? '…' : ''}</div>
+      const vol = m.vol >= 1e6 ? '$' + (m.vol/1e6).toFixed(1) + 'M' : '$' + (m.vol/1e3).toFixed(0) + 'K';
+      return `<div style="padding:8px 14px;border-bottom:1px solid var(--border2)" onmouseover="this.style.background='var(--paper3)'" onmouseout="this.style.background=''">
+        <div style="font-size:11px;color:var(--ink2);line-height:1.5;margin-bottom:5px">${m.q}</div>
         <div style="height:3px;background:var(--paper4);border-radius:2px;overflow:hidden;margin-bottom:3px">
           <div style="height:100%;background:var(--accent);width:${pct}%"></div>
         </div>
         <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--muted)">
-          <span style="color:${pct > 50 ? 'var(--accent)' : 'var(--muted)'}">${pct}% YES</span>
+          <span style="color:${pct>50?'var(--accent)':'var(--muted)'}">${pct}% YES</span>
           <span>${vol}</span>
         </div>
       </div>`;
