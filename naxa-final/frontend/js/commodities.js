@@ -22,13 +22,14 @@ const COMS = [
 ];
 
 function renderCommodities() {
+  await fetchLivePrices();
   const strip = $('com-strip');
   if (!strip) return;
   strip.innerHTML = '';
   const tickerData = [];
 
   COMS.forEach(c => {
-    const chg = (Math.random() - 0.48) * 3;
+    const chg = LIVE_PRICES['Gold'] || (c.b * (1 + chg/100));
     const price = c.b * (1 + chg / 100);
     const fmt = price >= 10000 ? price.toFixed(0) : price >= 100 ? price.toFixed(1) : price.toFixed(2);
     const up = chg >= 0;
