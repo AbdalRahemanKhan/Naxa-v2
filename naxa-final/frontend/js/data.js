@@ -141,16 +141,6 @@ ${newsContext ? 'Current context: ' + newsContext : 'Focus on: rubber, rare eart
   return null;
 }
 
-function timeAgo(dateStr) {
-  if (!dateStr) return '—';
-  const d = Date.now() - new Date(dateStr).getTime();
-  const m = Math.floor(d / 60000);
-  if (m < 1) return 'just now';
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  return `${Math.floor(h / 24)}d ago`;
-}
 
 // ── CURATED SIGNALS ───────────────────────────────────────────
 const CURATED = [
