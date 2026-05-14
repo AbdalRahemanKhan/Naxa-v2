@@ -110,38 +110,35 @@ async function loadSignals() {
 }
 
 async function generateSignals(newsContext = '') {
-  const sys = `You are NAXA's intelligence engine. Generate 8 supply chain intelligence signals as a JSON array.
+  const sys = `Return ONLY a valid JSON array of 6 supply chain signals. No markdown. No explanation. Just the array.
 
-${newsContext}
+Each item: {"id":"sig_X","headline":"max 12 words","category":"agricultural|energy|metals|shipping|geopolitical|financial","urgency":"immediate|short_term|medium_term","conviction":70-92,"what_happened":"2 sentences.","supply_chain":[{"stage":"1","entity":"name","impact":"effect","direction":"up|down|neutral"},{"stage":"2","entity":"name","impact":"effect","direction":"up|down|neutral"},{"stage":"3","entity":"name","impact":"effect","direction":"up|down|neutral"},{"stage":"4","entity":"name","impact":"effect","direction":"up|down|neutral"},{"stage":"5","entity":"name","impact":"effect","direction":"up|down|neutral"}],"second_order":["effect 1","effect 2"],"third_order":"non-obvious connection","instruments":[{"type":"equity","ticker_or_name":"TICK","reason":"why","time_horizon":"timeframe"}],"lead_lag_days":30,"source_type":"GROQ_LIVE","analyzed_at":"${new Date().toISOString()}"}
 
-Each signal must follow this EXACT schema (return ONLY the JSON array, no prose):
-{
-  "id": "sig_[6chars]",
-  "headline": "[max 15 words, punchy, specific]",
-  "category": "agricultural|energy|metals|shipping|geopolitical|financial",
-  "urgency": "immediate|short_term|medium_term",
-  "conviction": 50-95,
-  "what_happened": "[2 precise sentences. Specific facts.]",
-  "supply_chain": [
-    {"stage":"1","entity":"[real name]","impact":"[specific effect]","direction":"up|down|neutral"},
-    ... 5-7 stages
-  ],
-  "second_order": ["[effect with timeframe]","[effect 2]","[effect 3]"],
-  "third_order": "[Peter Gregory non-obvious connection]",
-  "instruments": [
-    {"type":"equity|futures|etf|currency","ticker_or_name":"[ticker]","reason":"[why]","time_horizon":"[timeframe]"},
-    ... 3-5 instruments
-  ],
-  "lead_lag_days": 30,
-  "source_type": "GROQ_LIVE",
-  "analyzed_at": "${new Date().toISOString()}"
-}
+${newsContext ? 'Current context: ' + newsContext : 'Focus on: rubber, rare earths, cocoa, fertilizer, shipping, nickel.'}`;
 
-Focus: RCEP agricultural commodities, energy, metals. Be specific — real companies, real tickers.`;
-
-  const reply = await callGroq([{ role: 'user', content: 'Generate 8 supply chain intelligence signals.' }], sys, 3200);
-  console.log('GROQ REPLY:', reply);
-return parseJSON(reply);
+  const reply = await callGroq([{ role: 'user', content: 'Generate the JSON array now.' }], sys, 3500);
+  console.log('GROQ REPLY FIRST 200 CHARS:', reply?.substring(0, 200));
+  
+  if (!reply) return null;
+  
+  // Try multiple parse strategies
+  let text = reply.trim();
+  
+  // Remove markdown if present
+  text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+  
+  // Find the array
+  const start = text.indexOf('[');
+  const end = text.lastIndexOf(']');
+  if (start !== -1 && end !== -1) {
+    try {
+      const arr = JSON.parse(text.substring(start, end + 1));
+      if (Array.isArray(arr) && arr.length > 0) return arr;
+    } catch(e) {
+      console.log('Parse failed:', e.message);
+    }
+  }
+  return null;
 }
 
 function timeAgo(dateStr) {
