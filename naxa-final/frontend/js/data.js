@@ -140,7 +140,8 @@ Each signal must follow this EXACT schema (return ONLY the JSON array, no prose)
 Focus: RCEP agricultural commodities, energy, metals. Be specific — real companies, real tickers.`;
 
   const reply = await callGroq([{ role: 'user', content: 'Generate 8 supply chain intelligence signals.' }], sys, 3200);
-  return parseJSON(reply);
+  console.log('GROQ REPLY:', reply);
+return parseJSON(reply);
 }
 
 function timeAgo(dateStr) {
