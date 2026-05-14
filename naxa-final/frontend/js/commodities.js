@@ -1,4 +1,17 @@
 // commodities.js
+const LIVE_PRICES = {};
+
+async function fetchLivePrices() {
+  try {
+    // CoinGecko works from browser with no key - CORS allowed
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,gold&vs_currencies=usd');
+    if (r.ok) {
+      const d = await r.json();
+      LIVE_PRICES['Gold'] = d.gold?.usd;
+    }
+  } catch {}
+}
+
 
 const COMS = [
   {n:'Brent Crude', b:82.4}, {n:'WTI', b:78.1}, {n:'Nat. Gas', b:2.85},
