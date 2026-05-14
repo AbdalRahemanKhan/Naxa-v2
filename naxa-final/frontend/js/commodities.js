@@ -15,8 +15,7 @@ function renderCommodities() {
   const tickerData = [];
 
   COMS.forEach(c => {
-    const seed = ((c.b * 1000) + (Date.now() % 86400000)) % 997;
-    const chg = ((seed % 43) - 20) / 10;
+    const chg = (Math.random() - 0.48) * 3;
     const price = c.b * (1 + chg / 100);
     const fmt = price >= 10000 ? price.toFixed(0) : price >= 100 ? price.toFixed(1) : price.toFixed(2);
     const up = chg >= 0;
