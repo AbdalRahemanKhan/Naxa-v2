@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   localStorage.setItem('naxa_profile', JSON.stringify(N.profile));
 
   loadCfgUI();
-  await fetchLivePrices()
+  
   startClock();
   wireNav();
   wireModals();
